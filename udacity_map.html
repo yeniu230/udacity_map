@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>udacity_map</title>
+        <style media="screen">
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #map {
+                height: 100%;
+                position: absolute;
+                right: 0;
+                left: 360px;
+                top: 0;
+            }
+
+            #content {
+                width: 100%;
+                height: 100%;
+                position: relative;
+            }
+
+            #left {
+                width: 340px;
+                height: 100%;
+                padding: 10px 10px 10px 20px;
+            }
+
+            button {
+                width: 40px;
+                height: 20px;
+            }
+
+            ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            li {
+                margin-top: 15px;
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="content">
+            <div id="left">
+                <h3>扬州景点</h3>
+                <div class="">
+                    <input type="text" name="" value="" id="inputValue">
+                    <button type="button" name="button" onclick="match()"></button>
+                </div>
+                <div id="name">
+                    <ul data-bind='foreach: yzName'>
+                        <li data-bind='text: title, click: hideListings'></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="map"></div>
+        </div>
+        <script src="knockout.js"></script>
+        <script src="map.js"></script>
+        <script async defer
+            src="http://webapi.amap.com/maps?v=1.3&key=8ab122ca18541f4a84657e6ff71db043&callback=initMap">
+        </script>
+    </body>
+</html>
