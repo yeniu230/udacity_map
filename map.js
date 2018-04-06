@@ -15,6 +15,7 @@ var locations = [
 //绑定景点名称到列表中
 var ViewModel = function() {
     var self = this;
+    self.locationInput = ko.observable('');
     self.yzName = ko.observableArray(locations);
     self.hideListings = function (evt){
         var titleName = event.target.innerHTML;
@@ -22,9 +23,19 @@ var ViewModel = function() {
             allMarker[i].setMap(map);
             if (titleName != allMarker[i].G.title) {
                 allMarker[i].setMap(null)
+            } else {
+                map.setZoomAndCenter(13, allMarker[i].location);
             }
         }
     };
+    self.listFilter = ko.computed(function(){
+        return ko.utils.arrayFilter(self.yzName(), function(location) {
+            if(location.title.indexOf(self.locationInput()) >= 0){
+
+                return true;
+            }
+        })
+    })
 };
 ko.applyBindings(ViewModel);
 
@@ -49,7 +60,7 @@ function initMap() {
   }
 };
 
-function match(){
+/*function match(){
     var inputValue = document.getElementById('inputValue').value;
     for (var i = 0; i < allMarker.length; i++) {
         allMarker[i].setMap(map);
@@ -57,4 +68,4 @@ function match(){
             allMarker[i].setMap(null)
         }
     }
-}
+}*/
