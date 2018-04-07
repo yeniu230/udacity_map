@@ -12,16 +12,17 @@ var locations = [
     location: [119.443762, 32.399009]},
 ];
 
-//绑定景点名称到列表中
+//数据动态绑定
 var ViewModel = function() {
     var self = this;
     self.locationInput = ko.observable('');
     self.yzName = ko.observableArray(locations);
     self.hideListings = function (evt){
         var titleName = event.target.innerHTML;
-        for (var i = 0; i < allMarker.length; i++) {
+        for (let i = 0; i < allMarker.length; i++) {
             if (titleName == allMarker[i].getTitle()) {
                 map.setZoomAndCenter(14, locations[i].location);
+                markerClick.call(allMarker[i]);
             }
         }
     };
@@ -60,7 +61,24 @@ function initMap() {
     };
 };
 
-    function markerClick(e){
-    infoWindow.setContent(e.target.getTitle());
-    infoWindow.open(map, e.target.getPosition());
-    };
+var wendu;
+
+fetch('https://www.apiopen.top/weatherApi?city=%E6%89%AC%E5%B7%9E').then(
+    function(response){
+        if(response.status!==200){
+            console.log("存在一个问题，状态码为："+response.status);
+            return;
+        }
+        //检查响应文本
+        response.json().then(function(data){
+            wendu = data.data.ganmao;
+        });
+    }
+).catch(function(err){
+    alert("Fetch错误:"+err);
+});
+
+function markerClick(){
+    infoWindow.setContent(this.getTitle() + wendu);
+    infoWindow.open(map, this.getPosition());
+};
