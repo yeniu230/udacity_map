@@ -20,18 +20,14 @@ var ViewModel = function() {
     self.hideListings = function (evt){
         var titleName = event.target.innerHTML;
         for (var i = 0; i < allMarker.length; i++) {
-            allMarker[i].setMap(map);
-            if (titleName != allMarker[i].G.title) {
-                allMarker[i].setMap(null)
-            } else {
-                map.setZoomAndCenter(13, allMarker[i].location);
+            if (titleName == allMarker[i].getTitle()) {
+                map.setZoomAndCenter(14, locations[i].location);
             }
         }
     };
     self.listFilter = ko.computed(function(){
         return ko.utils.arrayFilter(self.yzName(), function(location) {
             if(location.title.indexOf(self.locationInput()) >= 0){
-
                 return true;
             }
         })
@@ -41,12 +37,15 @@ ko.applyBindings(ViewModel);
 
 //初始化地图
 var map;
+var infoWindow;
 var allMarker = [];
 function initMap() {
   map = new AMap.Map('map', {
     zoom: 13,
     center: [119.421003,32.393159]
   });
+
+  infoWindow = new AMap.InfoWindow({offset:new AMap.Pixel(0,-20)});
 
   for (let i = 0; i < locations.length; i++) {
       let title = locations[i].title;
@@ -57,15 +56,11 @@ function initMap() {
           map: map
       });
       allMarker.push(marker);
-  }
+      marker.on('click', markerClick);
+    };
 };
 
-/*function match(){
-    var inputValue = document.getElementById('inputValue').value;
-    for (var i = 0; i < allMarker.length; i++) {
-        allMarker[i].setMap(map);
-        if (inputValue != allMarker[i].G.title) {
-            allMarker[i].setMap(null)
-        }
-    }
-}*/
+    function markerClick(e){
+    infoWindow.setContent(e.target.getTitle());
+    infoWindow.open(map, e.target.getPosition());
+    };
