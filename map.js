@@ -26,15 +26,20 @@ var ViewModel = function() {
             }
         }
     };
+    //动态筛选
     self.listFilter = ko.computed(function(){
         return ko.utils.arrayFilter(self.yzName(), function(location) {
             if(location.title.indexOf(self.locationInput()) >= 0){
+                location.marker.show();
                 return true;
+            } else {
+                location.marker.hide();
+                return false;
             }
         })
     })
 };
-ko.applyBindings(ViewModel);
+
 
 //初始化地图
 var map;
@@ -48,6 +53,7 @@ function initMap() {
 
   infoWindow = new AMap.InfoWindow({offset:new AMap.Pixel(0,-20)});
 
+  //创建标记
   for (let i = 0; i < locations.length; i++) {
       let title = locations[i].title;
       let position = locations[i].location;
@@ -56,13 +62,15 @@ function initMap() {
           title: title,
           map: map
       });
+      locations[i].marker = marker;
       allMarker.push(marker);
       marker.on('click', markerClick);
     };
+    ko.applyBindings(ViewModel);
 };
 
+//获取第三方信息
 var wendu;
-
 fetch('https://www.apiopen.top/weatherApi?city=%E6%89%AC%E5%B7%9E').then(
     function(response){
         if(response.status!==200){
@@ -79,6 +87,8 @@ fetch('https://www.apiopen.top/weatherApi?city=%E6%89%AC%E5%B7%9E').then(
 });
 
 function markerClick(){
+    //设置点击动画
+    this.setAnimation('AMAP_ANIMATION_DROP');
     infoWindow.setContent(this.getTitle() + wendu);
     infoWindow.open(map, this.getPosition());
 };
